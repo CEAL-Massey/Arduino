@@ -5,7 +5,7 @@
 #include "dht.h"
 #define DHTPIN 4
 dht DHT;
-int reading;
+int temp, humid, gl;
 
 void setup()
 {
@@ -20,13 +20,21 @@ void setup()
 void loop()
 {
   int chk = DHT.read11(DHTPIN);
-  //reading[0] = dht.readHumidity();
-  reading = DHT.temperature;
+  temp = DHT.temperature;
+  humid = DHT.humidity;
+
   delay(2000); 
 }
 
-void requestEvent(){  
-  TinyWireS.send(reading);
+void requestEvent(){
+  if(gl == 0) {
+    TinyWireS.send(temp);
+    gl = 1;
+  }
+  else {
+    TinyWireS.send(humid);
+    gl = 0;
+  }
   digitalWrite(1,HIGH);
   delay(10);
   digitalWrite(1,LOW);
